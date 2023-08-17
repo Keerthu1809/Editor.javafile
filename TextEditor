@@ -1,0 +1,134 @@
+/*a Java text editor file is an essential tool for developers and users alike, providing a platform for creating and editing plain text document
+s with a range of features designed to enhance productivity and streamline text manipulation tasks.*/
+This is the text editor program
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+
+class TextEditor extends JFrame implements ActionListener {
+    JTextArea textArea;
+
+    TextEditor() {
+        setTitle("Text Editor");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem newMenuItem = new JMenuItem("New");
+        JMenuItem openMenuItem = new JMenuItem("Open");
+        JMenuItem saveMenuItem = new JMenuItem("Save");
+        JMenuItem printMenuItem = new JMenuItem("Print");
+
+        newMenuItem.addActionListener(this);
+        openMenuItem.addActionListener(this);
+        saveMenuItem.addActionListener(this);
+        printMenuItem.addActionListener(this);
+
+        fileMenu.add(newMenuItem);
+        fileMenu.add(openMenuItem);
+        fileMenu.add(saveMenuItem);
+        fileMenu.add(printMenuItem);
+
+        JMenu editMenu = new JMenu("Edit");
+        JMenuItem cutMenuItem = new JMenuItem("Cut");
+        JMenuItem copyMenuItem = new JMenuItem("Copy");
+        JMenuItem pasteMenuItem = new JMenuItem("Paste");
+
+        cutMenuItem.addActionListener(this);
+        copyMenuItem.addActionListener(this);
+        pasteMenuItem.addActionListener(this);
+
+        editMenu.add(cutMenuItem);
+        editMenu.add(copyMenuItem);
+        editMenu.add(pasteMenuItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+
+        setJMenuBar(menuBar);
+
+        textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane);
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        switch (command) {
+            case "New":
+                textArea.setText("");
+                break;
+            case "Open":
+                openFile();
+                break;
+            case "Save":
+                saveFile();
+                break;
+            case "Print":
+                printFile();
+                break;
+            case "Cut":
+                textArea.cut();
+                break;
+            case "Copy":
+                textArea.copy();
+                break;
+            case "Paste":
+                textArea.paste();
+                break;
+        }
+    }
+
+    private void openFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showOpenDialog(this);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+                textArea.setText(content.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showSaveDialog(this);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(textArea.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void printFile() {
+        try {
+            textArea.print();
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new TextEditor());
+    }
+}
+
+
+
+
